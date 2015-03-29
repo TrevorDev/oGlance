@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="">
+
+    <title></title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/bower_components/fontawesome/css/font-awesome.min.css">
+    <script src="bower_components/rivets/dist/rivets.bundled.min.js"></script>
+    <script type="text/javascript">
+    	rivets.configure({
+
+		  // Attribute prefix in templates
+		  prefix: 'rv',
+
+		  // Preload templates with initial data on bind
+		  preloadData: true,
+
+		  // Root sightglass interface for keypaths
+		  rootInterface: '.',
+
+		  // Template delimiters for text bindings
+		  templateDelimiters: ['[[', ']]'],
+
+		  // Augment the event handler of the on-* binder
+		  handler: function(target, event, binding) {
+		    this.call(target, event, binding.view.models)
+		  }
+
+		})
+    </script>
+    <!-- Custom styles for this template -->
+    <link href="/public/css/main.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <div class="container-wide" id="app">
+    	<div class="row">
+	        <div class="col-md-2 sidebar">
+		        <ul class="nav nav-sidebar">
+		            <li rv-each-widget="widgets"><a href="#" rv-on-click="changeWidget">[[widget.name]] - [[widget.status]]</a></li>
+		            <!-- <li><a href="#">[[test]]</a></li> -->
+		          </ul>
+		    </div>
+	        <div class="col-md-10 main">
+		        <div class="well" rv-each-story="selectedWidget.stories">
+				    <button type="button" class="btn btn-default" rv-on-click="markRead"><span class="glyphicon glyphicon-remove"></span></button>
+				    <a rv-on-click="markRead" rv-href="story.commentsUrl"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-comment"></span></button></a>
+				    <a rv-on-click="markRead" rv-href="story.url">[[story.title]]</a>
+			    </div>
+		    </div>
+        </div>
+    </div>
+    
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/public/js/hackerNews.js"></script>
+    <script src="/public/js/story.js"></script>
+    <script src="/public/js/widget.js"></script>
+    <script src="/public/js/util.js"></script>
+    <script type="text/javascript">
+    	var t = {}
+    	t.widgets = []
+        t.widgets.push(new Widget({
+            name: "Reddit",
+            getStories: function(widget){
+                return $.Deferred(function( defer ) {
+                        $.getJSON("http://www.reddit.com/r/TODAYILEARNED+WORLDNEWS+ASKREDDIT+TECHNOLOGY+BESTOF+IAMA+SMASHBROS+MUSIC+HIPHOPHEADS+COMICS+PROGRAMMERHUMOR+FUTUROLOGY+PROGRAMMING+PERSONALFINANCE+KAPPA+GAMEDEV+ENTREPRENEUR+INVESTING+MASHUPS+FINANCIALINDEPENDENCE+RETIREDGIF+LIGHTBULB+STARTUPS+ZENHABITS+SMALLBUSINESS+NODE+CODING+INDIEGAMES+DATASETS+SOMEBODYMAKETHIS+ENTREPRENEURRIDEALONG+SIDEPROJECT+RUNITUP+ENTREPENEUR+CODEPROJECTS+SMALLBUISNESS+NODEJS+KOAJS+NOBADCONTENT+COMBOHYPE/top.json?limit=100").then(function(data){
+                            var stories = data.data.children.map(function(i){return new Story(widget.name+i.data.id, i.data.title, i.data.url, "https://www.reddit.com"+i.data.permalink)})
+                            defer.resolve(stories);
+                        })
+                }).promise()
+            }
+        }))
+        t.widgets.push(new Widget({
+            name: "HackerNews",
+            getStories: function(widget){
+                return $.Deferred(function( defer ) {
+                        hn.getTopStories(100)
+                        .then(function(d){
+                             var stories = d.map(function(i){
+                                 return new Story(widget.name+i.id,i.title, i.url, "https://news.ycombinator.com/item?id="+i.id)
+                             })
+                             defer.resolve(stories);
+                         })
+                }).promise()
+            }
+        }))
+        
+        t.selectedWidget = t.widgets[0]
+        t.changeWidget = function(event, binding){
+            t.selectedWidget = binding.widget
+            console.log(t.selectedWidget.name)
+        }
+        t.markRead = function(event, binding){
+            t.selectedWidget.markRead(event, binding);
+        }
+        t.widgets.forEach(function(i){
+            i.updateStories();
+        })
+		rivets.bind($('#app'), t)
+
+        window.onbeforeunload = function () {
+            t.widgets.forEach(function(i){
+                i.save();
+            })
+        };
+    </script>
+  </body>
+</html>
