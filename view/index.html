@@ -55,8 +55,8 @@
 	        <div class="col-md-10 main">
 		        <div class="well" rv-each-story="selectedWidget.stories">
 				    <button type="button" class="btn btn-default" rv-on-click="markRead"><span class="glyphicon glyphicon-remove"></span></button>
-				    <a rv-on-click="markRead" rv-href="story.commentsUrl"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-comment"></span></button></a>
-				    <a rv-on-click="markRead" rv-href="story.url">[[story.title]]</a>
+				    <a target="_blank" rv-on-click="markRead" rv-href="story.commentsUrl"><button type="button" class="btn btn-default"><span class="glyphicon glyphicon-comment"></span></button></a>
+				    <a target="_blank" rv-on-click="markRead" rv-href="story.url">[[story.title]]</a>
 			    </div>
 		    </div>
         </div>
@@ -107,7 +107,12 @@
             console.log(t.selectedWidget.name)
         }
         t.markRead = function(event, binding){
-            t.selectedWidget.markRead(event, binding);
+            //event.preventDefault();
+            //if I dont do this the link is removed before event gets fired causing the next link to be invoked
+            setTimeout(function(){
+                t.selectedWidget.markRead(event, binding);
+            }, 0)
+            
         }
         t.widgets.forEach(function(i){
             i.updateStories();
