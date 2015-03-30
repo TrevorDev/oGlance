@@ -5,7 +5,7 @@ var router = require('koa-router')
 var serve = require('koa-static')
 var views = require('co-views');
 
-var config = {appPort: 3000}
+var config = {appPort: process.env.PORT || 3000}
 var render = views('view', { map: { html: 'swig' } });
 var app = koa()
 
