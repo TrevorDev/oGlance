@@ -3,6 +3,10 @@
   "version": "0.0.0",
   "description": "",
   "main": "app.js",
+  "engines": {
+    "iojs": "1.0.x",
+    "node": "0.12.x"
+  },
   "dependencies": {
     "co-views": "^0.3.0",
     "koa": "^0.18.1",
