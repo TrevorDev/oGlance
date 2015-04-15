@@ -3,16 +3,14 @@
   "version": "0.0.0",
   "description": "",
   "main": "app.js",
-  "engines": {
-    "iojs": "1.0.x",
-    "node": "0.12.x"
-  },
   "dependencies": {
+    "co-request": "^0.2.1",
     "co-views": "^0.3.0",
     "koa": "^0.18.1",
-    "koa-router": "^4.2.0",
-    "koa-static": "^1.4.9",
-    "swig": "^1.4.2"
+    "koa-json-response": "^0.0.2",
+    "koa-router": "^4.3.2",
+    "swig": "^1.4.2",
+    "koa-static": "^1.4.9"
   },
   "devDependencies": {},
   "scripts": {
