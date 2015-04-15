@@ -79,7 +79,7 @@
             name: "Reddit",
             getStories: function(widget){
                 return $.Deferred(function( defer ) {
-                        $.getJSON("http://www.reddit.com/r/TODAYILEARNED+WORLDNEWS+ASKREDDIT+TECHNOLOGY+BESTOF+IAMA+SMASHBROS+MUSIC+HIPHOPHEADS+COMICS+PROGRAMMERHUMOR+FUTUROLOGY+PROGRAMMING+PERSONALFINANCE+KAPPA+GAMEDEV+ENTREPRENEUR+INVESTING+MASHUPS+FINANCIALINDEPENDENCE+RETIREDGIF+LIGHTBULB+STARTUPS+ZENHABITS+SMALLBUSINESS+NODE+CODING+INDIEGAMES+DATASETS+SOMEBODYMAKETHIS+ENTREPRENEURRIDEALONG+SIDEPROJECT+RUNITUP+ENTREPENEUR+CODEPROJECTS+SMALLBUISNESS+NODEJS+KOAJS+NOBADCONTENT+COMBOHYPE/top.json?limit=100").then(function(data){
+                        $.getJSON("http://www.reddit.com/r/TODAYILEARNED+WORLDNEWS+ASKREDDIT+TECHNOLOGY+BESTOF+IAMA+SMASHBROS+MUSIC+HIPHOPHEADS+COMICS+PROGRAMMERHUMOR+FUTUROLOGY+PROGRAMMING+PERSONALFINANCE+GAMEDEV+ENTREPRENEUR+INVESTING+MASHUPS+FINANCIALINDEPENDENCE+RETIREDGIF+LIGHTBULB+STARTUPS+ZENHABITS+SMALLBUSINESS+NODE+CODING+INDIEGAMES+DATASETS+SOMEBODYMAKETHIS+ENTREPRENEURRIDEALONG+SIDEPROJECT+RUNITUP+ENTREPENEUR+CODEPROJECTS+SMALLBUISNESS+NODEJS+KOAJS+NOBADCONTENT+COMBOHYPE/top.json?limit=100").then(function(data){
                             var stories = data.data.children.map(function(i){return new Story(widget.name+i.data.id, i.data.title, i.data.url, "https://www.reddit.com"+i.data.permalink)})
                             defer.resolve(stories);
                         })
@@ -97,6 +97,36 @@
                              })
                              defer.resolve(stories);
                          })
+                }).promise()
+            }
+        }))
+
+        t.widgets.push(new Widget({
+            name: "XKCD",
+            getStories: function(widget){
+                return $.Deferred(function( defer ) {
+                         $.getJSON("/api/xkcd/latest").then(function(resp){
+                            var stories = []
+                            for(var i = resp.data.latest-19;i<=resp.data.latest;i++){
+                                stories.push(new Story(widget.name+i, i, "http://xkcd.com/"+i, "http://xkcd.com/"+i));
+                            }
+                            defer.resolve(stories);
+                        })
+                }).promise()
+            }
+        }))
+
+        t.widgets.push(new Widget({
+            name: "C and H",
+            getStories: function(widget){
+                return $.Deferred(function( defer ) {
+                         $.getJSON("/api/cAndH/latest").then(function(resp){
+                            var stories = []
+                            for(var i = resp.data.latest-19;i<=resp.data.latest;i++){
+                                stories.push(new Story(widget.name+i, i, "http://explosm.net/comics/"+i, "http://explosm.net/comics/"+i));
+                            }
+                            defer.resolve(stories);
+                        })
                 }).promise()
             }
         }))
