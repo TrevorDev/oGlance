@@ -29,6 +29,26 @@ app.get('/api/cAndH/latest', function *(){
 	return this.jsonResp(200, {latest: parseInt(num)+1});
 })
 
+app.get('/api/tv/:show', function *(){
+	var show = this.params.show
+	var result = yield request('http://www.solarmovie.is/tv/'+show);
+	var regex = new RegExp('<a href="/tv/'+show+'/season-(\\d+)/episode-(\\d+)/" class="linkCount typicalGrey">\\s*(\\d+) links</a>', "g")
+	var matches, output = [];
+	while (matches = regex.exec(result.body)) {
+	    output.push({
+	    	season: parseInt(matches[1]),
+	    	episode: parseInt(matches[2]),
+	    	links: parseInt(matches[3]),
+	    	link: "http://www.solarmovie.is/tv/"+show+"/season-"+matches[1]+"/episode-"+matches[2]
+	    });
+	}
+	output = output.filter(function(e){
+		return e.links != 0;
+	})
+	console.log(output)
+	return this.jsonResp(200, output);
+})
+
 //Start server and listen on port
 var server = http.createServer(app.callback())
 server.listen(config.appPort);

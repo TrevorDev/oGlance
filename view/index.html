@@ -131,6 +131,35 @@
                 }).promise()
             }
         }))
+
+
+        t.widgets.push(new Widget({
+            name: "TV shows",
+            getStories: function(widget){
+                return $.Deferred(function( defer ) {
+                    var shows = ["silicon-valley-2014", "it-s-always-sunny-in-philadelphia-2005"]
+                    var deffList = shows.map(function(e){
+                        return $.Deferred(function( defer ) {
+                                 $.getJSON("/api/tv/"+e).then(function(resp){
+                                    var stories = resp.data.map(function(ep){
+                                        var i = "("+e+") S"+ep.season+"E"+ep.episode
+                                        return new Story(widget.name+i, i, ep.link, ep.link);
+                                    })
+                                    defer.resolve(stories);
+                                })
+                        }).promise()
+                    })
+                    $.when.apply($, deffList).then(function(){
+                        var args = Array.prototype.slice.call(arguments)
+                        console.log(args)
+                        var stories = args.reduce(function(prevVal, curVal){
+                            return prevVal.concat(curVal)
+                        }, [])
+                        defer.resolve(stories)
+                    })
+                }).promise()
+            }
+        }))
         
         t.selectedWidget = t.widgets[0]
         t.changeWidget = function(event, binding){
