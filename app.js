@@ -50,10 +50,9 @@ app.get('/api/tv/:show', function *(){
 })
 
 app.post('/deploy', function*(){
-	var sys = require('sys')
     var exec = require('child_process').exec;
     function puts(error, stdout, stderr) { 
-      sys.puts(stdout)
+      console.log(stdout)
     }
     exec(". "+__dirname+"/deploy.sh", puts); // command to be execute
 })
