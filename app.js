@@ -26,7 +26,7 @@ app.get('/api/xkcd/latest', function *(){
 app.get('/api/cAndH/latest', function *(){
 	var result = yield request('http://explosm.net/comics/latest');
 	var num = result.body.match(/<a href=\"\/comics\/(\d+)\/\" class=\"previous-comic\">/)[1]; //HACKY WAY BECAUSE THEY DONT HAVE API
-	return this.jsonResp(200, {latest: parseInt(num)+100});
+	return this.jsonResp(200, {latest: parseInt(num)+1});
 })
 
 app.get('/api/tv/:show', function *(){
@@ -50,6 +50,7 @@ app.get('/api/tv/:show', function *(){
 })
 
 app.post('/deploy', function*(){
+	//TODO filter deployment with secret and filter to only push to master (see npm gith which didnt work when i tried)
     var exec = require('child_process').exec;
     function puts(error, stdout, stderr) { 
       console.log(stdout)
