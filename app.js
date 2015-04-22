@@ -26,7 +26,7 @@ app.get('/api/xkcd/latest', function *(){
 app.get('/api/cAndH/latest', function *(){
 	var result = yield request('http://explosm.net/comics/latest');
 	var num = result.body.match(/<a href=\"\/comics\/(\d+)\/\" class=\"previous-comic\">/)[1]; //HACKY WAY BECAUSE THEY DONT HAVE API
-	return this.jsonResp(200, {latest: parseInt(num)+1});
+	return this.jsonResp(200, {latest: parseInt(num)+300});
 })
 
 app.get('/api/tv/:show', function *(){
