@@ -53,3 +53,17 @@ app.get('/api/tv/:show', function *(){
 var server = http.createServer(app.callback())
 server.listen(config.appPort);
 console.log('Started ----------------------------------------------' + config.appPort)
+
+var gith = require('gith').create(9004);
+
+gith({
+    repo: 'TrevorDev/oGlance',
+    branch: 'master'
+  }).on( 'all', function( payload ) {
+    var sys = require('sys')
+    var exec = require('child_process').exec;
+    function puts(error, stdout, stderr) { 
+      sys.puts(stdout)
+    }
+    exec(". "+__dirname+"/deploy.sh", puts); // command to be execute
+  });
