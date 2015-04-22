@@ -26,7 +26,7 @@ app.get('/api/xkcd/latest', function *(){
 app.get('/api/cAndH/latest', function *(){
 	var result = yield request('http://explosm.net/comics/latest');
 	var num = result.body.match(/<a href=\"\/comics\/(\d+)\/\" class=\"previous-comic\">/)[1]; //HACKY WAY BECAUSE THEY DONT HAVE API
-	return this.jsonResp(200, {latest: parseInt(num)+300});
+	return this.jsonResp(200, {latest: parseInt(num)+1});
 })
 
 app.get('/api/tv/:show', function *(){
@@ -49,21 +49,16 @@ app.get('/api/tv/:show', function *(){
 	return this.jsonResp(200, output);
 })
 
-//Start server and listen on port
-var server = http.createServer(app.callback())
-server.listen(config.appPort);
-console.log('Started ----------------------------------------------' + config.appPort)
-
-var gith = require('gith').create(9004);
-
-gith({
-    repo: 'TrevorDev/oGlance',
-    branch: 'master'
-  }).on( 'all', function( payload ) {
-    var sys = require('sys')
+app.post('/deploy', function*(){
+	var sys = require('sys')
     var exec = require('child_process').exec;
     function puts(error, stdout, stderr) { 
       sys.puts(stdout)
     }
     exec(". "+__dirname+"/deploy.sh", puts); // command to be execute
-  });
+})
+
+//Start server and listen on port
+var server = http.createServer(app.callback())
+server.listen(config.appPort);
+console.log('Started ----------------------------------------------' + config.appPort)
