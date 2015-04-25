@@ -122,10 +122,9 @@
             getStories: function(widget){
                 return $.Deferred(function( defer ) {
                          $.getJSON("/api/cAndH/latest").then(function(resp){
-                            var stories = []
-                            for(var i = resp.data.latest-19;i<=resp.data.latest;i++){
-                                stories.push(new Story(widget.name+i, i, "http://explosm.net/comics/"+i, "http://explosm.net/comics/"+i));
-                            }
+                            var stories = resp.data.latest.map(function(i){
+                                return new Story(widget.name+i, i, "http://explosm.net/comics/"+i, "http://explosm.net/comics/"+i)
+                            })
                             defer.resolve(stories);
                         })
                 }).promise()

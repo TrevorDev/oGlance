@@ -24,9 +24,18 @@ app.get('/api/xkcd/latest', function *(){
 })
 
 app.get('/api/cAndH/latest', function *(){
-	var result = yield request('http://explosm.net/comics/latest');
-	var num = result.body.match(/<a href=\"\/comics\/(\d+)\/\" class=\"previous-comic\">/)[1]; //HACKY WAY BECAUSE THEY DONT HAVE API
-	return this.jsonResp(200, {latest: parseInt(num)+1});
+	var result = yield request('http://feeds.feedburner.com/Explosm');
+	var latest = result.body.match(/www.explosm.net\/comics\/(\d+)/g); //HACKY WAY BECAUSE THEY DONT HAVE API
+	latest = latest.map(function(i){
+		return i.match(/\d+/)[0];
+	})
+	latest = latest.reduce(function(p, c)//uniq
+	{
+		if (p.indexOf(c) < 0) p.push(c);
+		return p;
+	}, []); 
+	//console.log(latest)
+	return this.jsonResp(200, {latest: latest});
 })
 
 app.get('/api/tv/:show', function *(){
@@ -45,7 +54,6 @@ app.get('/api/tv/:show', function *(){
 	output = output.filter(function(e){
 		return e.links != 0;
 	})
-	console.log(output)
 	return this.jsonResp(200, output);
 })
 
