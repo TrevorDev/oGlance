@@ -18,12 +18,12 @@ app.get('/', function*(){ this.body = yield render("index") })
 app.get(/\/public\/*/, serve('.'))
 app.get(/\/bower_components\/*/, serve('.'))
 
-app.get('/api/xkcd/latest', function *(){
+app.get('/api/comic/xkcd/latest', function *(){
 	var result = yield request('http://xkcd.com/info.0.json');
 	return this.jsonResp(200, {latest: JSON.parse(result.body).num});
 })
 
-app.get('/api/cAndH/latest', function *(){
+app.get('/api/comic/cAndH/latest', function *(){
 	var result = yield request('http://feeds.feedburner.com/Explosm');
 	var latest = result.body.match(/www.explosm.net\/comics\/(\d+)/g); //HACKY WAY BECAUSE THEY DONT HAVE API
 	latest = latest.map(function(i){
@@ -33,12 +33,13 @@ app.get('/api/cAndH/latest', function *(){
 	{
 		if (p.indexOf(c) < 0) p.push(c);
 		return p;
-	}, []); 
-	//console.log(latest)
+	}, []).map(function(i){
+		return {link: "http://explosm.net/comics/"+i, name: i};
+	})
 	return this.jsonResp(200, {latest: latest});
 })
 
-app.get('/api/dilbert/latest', function *(){
+app.get('/api/comic/dilbert/latest', function *(){
 	var result = yield request('http://feeds.feedburner.com/DilbertDailyStrip');
 	var latest = result.body.match(/\d+\-\d+\-\d+/g); 
 	latest = latest.reduce(function(p, c)//uniq
@@ -49,7 +50,6 @@ app.get('/api/dilbert/latest', function *(){
 	.map(function(i){
 		return {link: "http://dilbert.com/strip/"+i, name: i};
 	})
-	console.log(latest)
 	return this.jsonResp(200, {latest: latest});
 })
 
