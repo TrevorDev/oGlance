@@ -38,6 +38,21 @@ app.get('/api/cAndH/latest', function *(){
 	return this.jsonResp(200, {latest: latest});
 })
 
+app.get('/api/dilbert/latest', function *(){
+	var result = yield request('http://feeds.feedburner.com/DilbertDailyStrip');
+	var latest = result.body.match(/\d+\-\d+\-\d+/g); 
+	latest = latest.reduce(function(p, c)//uniq
+	{
+		if (p.indexOf(c) < 0) p.push(c);
+		return p;
+	}, [])
+	.map(function(i){
+		return {link: "http://dilbert.com/strip/"+i, name: i};
+	})
+	console.log(latest)
+	return this.jsonResp(200, {latest: latest});
+})
+
 app.get('/api/tv/:show', function *(){
 	var show = this.params.show
 	var result = yield request('http://www.solarmovie.is/tv/'+show);
@@ -53,7 +68,7 @@ app.get('/api/tv/:show', function *(){
 	}
 	output = output.filter(function(e){
 		return e.links != 0;
-	})
+	}).slice(0, 5);
 	return this.jsonResp(200, output);
 })
 

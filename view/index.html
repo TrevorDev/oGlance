@@ -130,6 +130,20 @@
                 }).promise()
             }
         }))
+        
+        t.widgets.push(new Widget({
+            name: "Dilbert",
+            getStories: function(widget){
+                return $.Deferred(function( defer ) {
+                         $.getJSON("/api/dilbert/latest").then(function(resp){
+                            var stories = resp.data.latest.map(function(i){
+                                return new Story(widget.name+i.name, i.name, i.link, i.link)
+                            })
+                            defer.resolve(stories);
+                        })
+                }).promise()
+            }
+        }))
 
 
         t.widgets.push(new Widget({
