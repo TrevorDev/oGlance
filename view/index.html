@@ -74,6 +74,20 @@
     <script src="/public/js/widget.js"></script>
     <script src="/public/js/util.js"></script>
     <script type="text/javascript">
+        var getComicStories = function(url){
+			return function(widget){
+                return $.Deferred(function( defer ) {
+                         $.getJSON(url).then(function(resp){                            
+                            var stories = resp.data.latest.map(function(i){
+                                return new Story(widget.name+i.name, i.name, i.link, i.link)
+                            })
+                            defer.resolve(stories);
+                        })
+                }).promise()
+            };
+		}
+        
+        
     	var t = {}
     	t.widgets = []
         t.widgets.push(new Widget({
@@ -104,44 +118,17 @@
 
         t.widgets.push(new Widget({
             name: "XKCD",
-            getStories: function(widget){
-                return $.Deferred(function( defer ) {
-                         $.getJSON("/api/comic/xkcd/latest").then(function(resp){                            
-                            var stories = resp.data.latest.map(function(i){
-                                return new Story(widget.name+i.name, i.name, i.link, i.link)
-                            })
-                            defer.resolve(stories);
-                        })
-                }).promise()
-            }
+            getStories: getComicStories("/api/comic/xkcd/latest")
         }))
 
         t.widgets.push(new Widget({
             name: "C and H",
-            getStories: function(widget){
-                return $.Deferred(function( defer ) {
-                         $.getJSON("/api/comic/cAndH/latest").then(function(resp){
-                            var stories = resp.data.latest.map(function(i){
-                                return new Story(widget.name+i.name, i.name, i.link, i.link)
-                            })
-                            defer.resolve(stories);
-                        })
-                }).promise()
-            }
+            getStories: getComicStories("/api/comic/cAndH/latest")
         }))
         
         t.widgets.push(new Widget({
             name: "Dilbert",
-            getStories: function(widget){
-                return $.Deferred(function( defer ) {
-                         $.getJSON("/api/comic/dilbert/latest").then(function(resp){
-                            var stories = resp.data.latest.map(function(i){
-                                return new Story(widget.name+i.name, i.name, i.link, i.link)
-                            })
-                            defer.resolve(stories);
-                        })
-                }).promise()
-            }
+            getStories: getComicStories("/api/comic/dilbert/latest")
         }))
 
 
