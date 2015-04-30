@@ -20,7 +20,12 @@ app.get(/\/bower_components\/*/, serve('.'))
 
 app.get('/api/comic/xkcd/latest', function *(){
 	var result = yield request('http://xkcd.com/info.0.json');
-	return this.jsonResp(200, {latest: JSON.parse(result.body).num});
+	var num = JSON.parse(result.body).num;
+	var latest = []
+    for(var i = num-19;i<=num;i++){
+        latest.push({link: "http://xkcd.com/"+i, name: i})
+    }
+	return this.jsonResp(200, {latest: latest});
 })
 
 app.get('/api/comic/cAndH/latest', function *(){
