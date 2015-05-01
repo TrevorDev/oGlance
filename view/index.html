@@ -136,7 +136,7 @@
             name: "TV shows",
             getStories: function(widget){
                 return $.Deferred(function( defer ) {
-                    var shows = ["silicon-valley-2014", "it-s-always-sunny-in-philadelphia-2005"]
+                    var shows = ["silicon-valley-2014", "it-s-always-sunny-in-philadelphia-2005", "gotham-2014", "suits-2011", "game-of-thrones-2011", "bates-motel-2013"]
                     var deffList = shows.map(function(e){
                         return $.Deferred(function( defer ) {
                                  $.getJSON("/api/tv/"+e).then(function(resp){
